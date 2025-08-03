@@ -1,0 +1,170 @@
+{% extends 'pets/base.html' %}
+
+{% block title %}{% if object %}Edit Pet{% else %}Add New Pet{% endif %} - Pet Shelter{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>
+                    {% if object %}
+                        <i class="fas fa-edit"></i> Edit {{ object.name }}
+                    {% else %}
+                        <i class="fas fa-plus"></i> Add New Pet
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                <i class="fas fa-tag"></i> Pet Name *
+                            </label>
+                            <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" class="form-control" value="{{ form.name.value|default:'' }}" required>
+                            {% if form.name.errors %}
+                                <div class="text-danger small">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.age.id_for_label }}" class="form-label">
+                                <i class="fas fa-birthday-cake"></i> Age (years) *
+                            </label>
+                            <input type="number" name="{{ form.age.name }}" id="{{ form.age.id_for_label }}" class="form-control" value="{{ form.age.value|default:'' }}" min="0" required>
+                            {% if form.age.errors %}
+                                <div class="text-danger small">
+                                    {{ form.age.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.species.id_for_label }}" class="form-label">
+                                <i class="fas fa-paw"></i> Species *
+                            </label>
+                            <select name="{{ form.species.name }}" id="{{ form.species.id_for_label }}" class="form-select" required>
+                                <option value="">Select Species</option>
+                                <option value="dog" {% if form.species.value == 'dog' %}selected{% endif %}>Dog</option>
+                                <option value="cat" {% if form.species.value == 'cat' %}selected{% endif %}>Cat</option>
+                                <option value="bird" {% if form.species.value == 'bird' %}selected{% endif %}>Bird</option>
+                            </select>
+                            {% if form.species.errors %}
+                                <div class="text-danger small">
+                                    {{ form.species.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.city.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> City *
+                            </label>
+                            <input type="text" name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" class="form-control" value="{{ form.city.value|default:'' }}" required>
+                            {% if form.city.errors %}
+                                <div class="text-danger small">
+                                    {{ form.city.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">
+                                <i class="fas fa-info-circle"></i> Status *
+                            </label>
+                            <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="available" {% if form.status.value == 'available' %}selected{% endif %}>Available</option>
+                                <option value="adopted" {% if form.status.value == 'adopted' %}selected{% endif %}>Adopted</option>
+                            </select>
+                            {% if form.status.errors %}
+                                <div class="text-danger small">
+                                    {{ form.status.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                <i class="fas fa-camera"></i> Photo
+                            </label>
+                            <input type="file" name="{{ form.photo.name }}" id="{{ form.photo.id_for_label }}" class="form-control" accept="image/*">
+                            {% if form.photo.errors %}
+                                <div class="text-danger small">
+                                    {{ form.photo.errors }}
+                                </div>
+                            {% endif %}
+                            {% if object and object.photo %}
+                                <div class="mt-2">
+                                    <img src="{{ object.photo.url }}" class="img-thumbnail" alt="{{ object.name }} photo">
+                                    <p class="small text-muted mt-1">Current photo</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">
+                            <i class="fas fa-align-left"></i> Description *
+                        </label>
+                        <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" class="form-control" rows="4" required>{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="text-danger small">
+                                {{ form.description.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Tell potential adopters about this pet's personality, habits, and special needs.
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            {% if object %}
+                                <i class="fas fa-save"></i> Update Pet
+                            {% else %}
+                                <i class="fas fa-plus"></i> Add Pet
+                            {% endif %}
+                        </button>
+                        
+                        {% if object %}
+                            <a href="{% url 'pet_detail' object.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% else %}
+                            <a href="{% url 'pet_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb"></i> Tips for a Great Pet Profile</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Upload a clear, well-lit photo of your pet</li>
+                    <li>Write a detailed description including personality traits</li>
+                    <li>Mention any special needs or requirements</li>
+                    <li>Be honest about the pet's energy level and temperament</li>
+                    <li>Include information about the pet's history if known</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

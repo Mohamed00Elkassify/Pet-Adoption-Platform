@@ -1,0 +1,120 @@
+{% extends 'pets/base.html' %}
+
+{% block title %}Adoption Request for {{ pet.name }} - Pet Shelter{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-heart"></i> Adoption Request for {{ pet.name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <!-- Pet Information -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {% if pet.photo %}
+                            <img src="{{ pet.photo.url }}" class="img-fluid rounded w-100" style="height: 250px; object-fit: cover;" alt="{{ pet.name }}">
+                        {% else %}
+                            <div class="bg-secondary rounded text-center d-flex align-items-center justify-content-center w-100" style="height: 250px;">
+                                <i class="fas fa-paw fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ pet.name }}</h4>
+                        <p class="text-muted">
+                            <i class="fas fa-tag"></i> {{ pet.get_species_display }} • 
+                            <i class="fas fa-birthday-cake"></i> {{ pet.age }} years old • 
+                            <i class="fas fa-map-marker-alt"></i> {{ pet.city }}
+                        </p>
+                        <p>{{ pet.description|truncatewords:30 }}</p>
+                        <span class="badge bg-success">{{ pet.get_status_display }}</span>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Adoption Form -->
+                <h5 class="mb-3">
+                    <i class="fas fa-user"></i> Your Information
+                </h5>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.requester_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-user"></i> Full Name *
+                            </label>
+                            <input type="text" name="{{ form.requester_name.name }}" id="{{ form.requester_name.id_for_label }}" class="form-control" value="{{ form.requester_name.value|default:'' }}" required>
+                            {% if form.requester_name.errors %}
+                                <div class="text-danger small">
+                                    {{ form.requester_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label">
+                                <i class="fas fa-phone"></i> Phone Number *
+                            </label>
+                            <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" class="form-control" value="{{ form.phone.value|default:'' }}" required>
+                            {% if form.phone.errors %}
+                                <div class="text-danger small">
+                                    {{ form.phone.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Address *
+                        </label>
+                        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" class="form-control" value="{{ form.email.value|default:'' }}" required>
+                        {% if form.email.errors %}
+                            <div class="text-danger small">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">
+                            <i class="fas fa-comment"></i> Message (Optional)
+                        </label>
+                        <textarea name="{{ form.message.name }}" id="{{ form.message.id_for_label }}" class="form-control" rows="4">{{ form.message.value|default:'' }}</textarea>
+                        {% if form.message.errors %}
+                            <div class="text-danger small">
+                                {{ form.message.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Tell the pet owner why you'd be a great match for {{ pet.name }}!
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>What happens next?</strong><br>
+                        Your adoption request will be sent to {{ pet.owner.username }}. They will review your request and contact you directly if they're interested in proceeding with the adoption.
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-heart"></i> Submit Adoption Request
+                        </button>
+                        <a href="{% url 'pet_detail' pet.pk %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Pet
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

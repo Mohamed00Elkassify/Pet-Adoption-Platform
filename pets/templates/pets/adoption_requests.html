@@ -1,0 +1,146 @@
+{% extends 'pets/base.html' %}
+
+{% block title %}My Adoption Requests - Pet Shelter{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-heart"></i> Adoption Requests for My Pets</h1>
+            <a href="{% url 'pet_list' %}" class="btn btn-primary">
+                <i class="fas fa-paw"></i> View All Pets
+            </a>
+        </div>
+
+        {% if requests %}
+            <div class="row">
+                {% for request in requests %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-paw"></i> {{ request.pet.name }}
+                                </h5>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ request.created_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                            <div class="card-body">
+                                <!-- Pet Info -->
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        {% if request.pet.photo %}
+                                            <img src="{{ request.pet.photo.url }}" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;" alt="{{ request.pet.name }}">
+                                        {% else %}
+                                            <div class="bg-secondary rounded text-center d-flex align-items-center justify-content-center w-100" style="height: 120px;">
+                                                <i class="fas fa-paw fa-2x text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-8">
+                                        <h6>Pet Details:</h6>
+                                        <p class="small mb-1">
+                                            <i class="fas fa-tag"></i> {{ request.pet.get_species_display }}
+                                        </p>
+                                        <p class="small mb-1">
+                                            <i class="fas fa-birthday-cake"></i> {{ request.pet.age }} years old
+                                        </p>
+                                        <p class="small mb-1">
+                                            <i class="fas fa-map-marker-alt"></i> {{ request.pet.city }}
+                                        </p>
+                                        <span class="badge {% if request.pet.status == 'available' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ request.pet.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <!-- Requester Info -->
+                                <h6><i class="fas fa-user"></i> Adoption Request From:</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="small mb-1">
+                                            <strong>Name:</strong> {{ request.requester_name }}
+                                        </p>
+                                        <p class="small mb-1">
+                                            <strong>Email:</strong> 
+                                            <a href="mailto:{{ request.email }}">{{ request.email }}</a>
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="small mb-1">
+                                            <strong>Phone:</strong> 
+                                            <a href="tel:{{ request.phone }}">{{ request.phone }}</a>
+                                        </p>
+                                        <p class="small mb-1">
+                                            <strong>Submitted:</strong> {{ request.created_at|date:"M d, Y g:i A" }}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                {% if request.message %}
+                                    <div class="mt-3">
+                                        <h6><i class="fas fa-comment"></i> Message:</h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <p class="mb-0 small">{{ request.message }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'pet_detail' request.pet.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View Pet
+                                    </a>
+                                    <a href="mailto:{{ request.email }}?subject=Re: Adoption Request for {{ request.pet.name }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-envelope"></i> Contact
+                                    </a>
+                                    <a href="tel:{{ request.phone }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-phone"></i> Call
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Summary Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h4 class="text-primary">{{ requests|length }}</h4>
+                            <p class="mb-0">Total Requests</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-success">{{ requests|length }}</h4>
+                            <p class="mb-0">Pending Review</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-info">{{ user.pets.count }}</h4>
+                            <p class="mb-0">Your Pets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-heart fa-4x text-muted mb-3"></i>
+                <h3>No Adoption Requests Yet</h3>
+                <p class="text-muted">You haven't received any adoption requests for your pets yet.</p>
+                <div class="mt-4">
+                    <a href="{% url 'pet_add' %}" class="btn btn-primary me-2">
+                        <i class="fas fa-plus"></i> Add a Pet
+                    </a>
+                    <a href="{% url 'pet_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-paw"></i> Browse All Pets
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

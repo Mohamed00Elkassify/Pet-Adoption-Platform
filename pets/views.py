@@ -69,3 +69,24 @@ class PetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return Pet.objects.filter(
           id=self.kwargs['pk'], owner=self.request.user
         ).exists()
+    
+class AdoptionRequestCreateView(CreateView):
+    model = AdoptionRequest
+    form_class = AdoptionRequestForm
+    template_name = 'pets/adoption_form.html'
+
+    def form_valid(self, form):
+        pet = Pet.objects.get(pk=self.kwargs['pk'])
+        form.instance.pet = pet
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('pet_detail', kwargs={'pk': self.kwargs['pk']})
+
+class AdoptionRequestListView(LoginRequiredMixin, ListView):
+    model = AdoptionRequest
+    template_name = 'pets/adoption_requests.html'
+    context_object_name = "requests"
+
+    def get_queryset(self):
+        return AdoptionRequest.objects.filter(pet__owner=self.request.user)

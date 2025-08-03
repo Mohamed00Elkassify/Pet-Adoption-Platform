@@ -1,0 +1,115 @@
+{% extends 'pets/base.html' %}
+
+{% block title %}Sign Up - Pet Shelter{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h2>Join Pet Shelter</h2>
+                    <p class="text-muted">Create your account to help pets find homes</p>
+                </div>
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Please correct the errors below.
+                    </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.username.help_text %}
+                            <div class="form-text">{{ form.username.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger small">
+                                {{ form.password1.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.password1.help_text %}
+                            <div class="form-text">{{ form.password1.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger small">
+                                {{ form.password2.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.password2.help_text %}
+                            <div class="form-text">{{ form.password2.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account? 
+                            <a href="{% url 'login' %}" class="text-decoration-none">
+                                Sign in here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Benefits Card -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-heart"></i> Join our community of pet lovers:
+                </h6>
+                <ul class="small mb-0">
+                    <li>Help pets find loving homes</li>
+                    <li>Connect with potential adopters</li>
+                    <li>Share your pet's story</li>
+                    <li>Make a difference in animal welfare</li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
